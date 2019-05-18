@@ -1,4 +1,5 @@
 class Helper
+  require 'tablegen'
 
   def self.today_as_string
     today = DateTime.now
@@ -30,21 +31,33 @@ class Helper
   def self.legs_stats(args)
     range = 500
     range = args.first.to_i unless args.first.nil?
-    result = ''
-    Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }[0..10].each do |array|
-      result << array.join(': ') + "\n"
+    table = TableGen.new
+    table.width = 23
+    table.column 0 do |col|
+      col.stretch = true
     end
-    result
+    table.header 'LEGS', 'Count'
+    table.separator
+    Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }[0..10].each do |array|
+      table.row array[0], array[1]
+    end
+    table
   end
 
   def self.plane_stats(args)
     range = 500
     range = args.first.to_i unless args.first.nil?
-    result = ''
-    Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
-      result << array.join(': ') + "\n"
+    table = TableGen.new
+    table.width = 16
+    table.column 0 do |col|
+      col.stretch = true
     end
-    result
+    table.header 'Plane', 'Count'
+    table.separator
+    Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
+      table.row array[0], array[1]
+    end
+    table
   end
 
   def self.get_plane_id(name)
