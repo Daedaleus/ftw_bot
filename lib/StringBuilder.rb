@@ -42,6 +42,14 @@ class StringBuilder
     content
   end
 
+  def self.guinness(count = 0)
+    "Ordering #{count} bottles of Guinness to EIDW"
+  end
+
+  def self.duftbaum(count = 0)
+    "Ordering #{count} bottles of Guinnes to EDFH"
+  end
+
   def self.add_help
     "Pattern: \"Aircraft: LEG1-LEG2-LEG3 HH:MM-HH:MM\""
   end

@@ -3,9 +3,10 @@ require 'active_record'
 require 'discordrb'
 require 'date'
 require 'log4r'
+require 'require_all'
 
-require_relative './lib/StringBuilder'
-require_relative './lib/Helper'
+require_all './lib'
+require_all './models'
 
 Log4r::Logger.root.level = Log4r::DEBUG
 $logger = Log4r::Logger.new('discord_bot')
@@ -17,11 +18,12 @@ $logger.info 'Initialized logging'
 
 configuration = YAML::load(IO.read('db/config.yml'))
 ActiveRecord::Base.establish_connection(configuration['development'])
+ActiveRecord::Base.time_zone_aware_types = [:datetime, :time]
 
 $logger.info 'Initialized active record'
 
-class Flight < ActiveRecord::Base
-end
+$logger.info 'Setting the currect time zone'
+Time.zone = 'Berlin'
 
 $logger.info 'Initialized models'
 
@@ -75,6 +77,22 @@ end
 
 bot.command :id do |event, *args|
   Helper.id(event.user.name)
-end 
+end
+
+bot.command :guinness do |event, *args|
+  StringBuilder.guinness(args.join(' '))
+end
+
+bot.command :duftbaum do |event, *args|
+  StringBuilder.duftbaum(args.join(' '))
+end
+
+bot.command :plane_stats do |event, *args|
+  Helper.plane_stats(args)
+end
+
+bot.command :legs_stats do |event, *args|
+  Helper.legs_stats(args)
+end
 
 bot.run

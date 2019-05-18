@@ -19,12 +19,65 @@ class Helper
       result = 'Got your flight pilot!'
       start = today_as_string + 'T' + matches[0][2]
       finish = today_as_string + 'T' + matches[0][3]
-      Flight.create(user: event.user.name, aircraft: matches[0][0], start: start, finish: finish, legs: matches[0][1])
+      Flight.create(user: event.user.name, plane_id: get_plane_id(matches[0][0]), start: start, finish: finish, legs: matches[0][1])
     else
       $logger.warn "Adding not possible due wrong syntax: #{args.join ' '}"
       result = 'What?'
     end
     result
+  end
+
+  def self.legs_stats(args)
+    range = 500
+    range = args.first.to_i unless args.first.nil?
+    result = ''
+    Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }[0..10].each do |array|
+      result << array.join(': ') + "\n"
+    end
+    result
+  end
+
+  def self.plane_stats(args)
+    range = 500
+    range = args.first.to_i unless args.first.nil?
+    result = ''
+    Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
+      result << array.join(': ') + "\n"
+    end
+    result
+  end
+
+  def self.get_plane_id(name)
+    case name
+    when 'A320', 'M.A320', 'B.A320', 'M.A.320', 'a320'
+      Plane.find_or_create_by(name: 'A320').id
+    when 'DC6'
+      Plane.find_or_create_by(name: 'DC6').id
+    when 'B757', 'b757', 'b752', 'B737-800', 'B753', '753', '757', 'M.757', 'L.757', 'L757'
+      Plane.find_or_create_by(name: 'B757').id
+    when 'Citation2'
+      Plane.find_or_create_by(name: 'Citation2').id
+    when 'B738', 'B378', '737', 'b737', 'B737'
+      Plane.find_or_create_by(name: 'B738').id
+    when 'E195', 'L195', 'L.195', 'L-E195', 'EMB195', 'L.E195'
+      Plane.find_or_create_by(name: 'E195').id
+    when 'E170'
+      Plane.find_or_create_by(name: 'E170').id
+    when 'B748'
+      Plane.find_or_create_by(name: 'B748').id
+    when 'S340'
+      Plane.find_or_create_by(name: 'S340').id
+    when 'DC3'
+      Plane.find_or_create_by(name: 'DC3').id
+    when 'TMB', 'TMB850'
+      Plane.find_or_create_by(name: 'TMB850').id
+    when 'MD82', 'MD-82'
+      Plane.find_or_create_by(name: 'MD82').id
+    when 'MD80'
+      Plane.find_or_create_by(name: 'MD80').id
+    else
+      Plane.find_or_create_by(name: name).id
+    end
   end
 
   def self.add_future(event,args)
@@ -37,7 +90,7 @@ class Helper
       date = matches[0][2]
       start = date + ' ' + matches[0][3]
       finish = date + ' ' + matches[0][4]
-      Flight.create(user: event.user.name, aircraft: matches[0][0], start: start, finish: finish, legs: matches[0][1])
+      Flight.create(user: event.user.name, plane_id: get_plane_id(matches[0][0]), start: start, finish: finish, legs: matches[0][1])
     else
       $logger.warn "Adding not possible due wrong syntax: #{args.join ' '}"
       result = 'What?'
@@ -53,7 +106,7 @@ class Helper
       return "Deleted flight with id #{args.first}"
     else
       Flight.where(user: event.user.name).each do |flight|
-        result += "#{flight.id}: #{flight.aircraft} - #{flight.legs}\n"
+        result += "#{flight.id}: #{flight.plane.name} - #{flight.legs}\n"
       end
       return result
     end
@@ -63,11 +116,11 @@ class Helper
   def self.show_plan
     $logger.info "Showing plan"
     result = ''
-    flights = Flight.where('finish > ?', DateTime.now).order(finish: :asc)
+    flights = Flight.where('finish > ?', DateTime.now + (2.0/24)).order(finish: :asc)
     if flights.count > 0
       flights.each do |flight|
         result += StringBuilder.show_plan(flight.user,
-                                          flight.aircraft,
+                                          flight.plane.name,
                                           flight.legs,
                                           flight.start,
                                           flight.finish,
@@ -83,7 +136,7 @@ class Helper
     $logger.info "Showing ids from #{user}"
     result = ''
     Flight.where(user: user).where('finish >= ?', DateTime.now).each do |flight|
-      result += StringBuilder.id(flight.id, flight.aircraft, flight.legs) + "\n"
+      result += StringBuilder.id(flight.id, flight.plane.name, flight.legs) + "\n"
     end
     result ? result : 'There are no flights'
   end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_15_225347) do
+ActiveRecord::Schema.define(version: 2019_05_16_192155) do
 
   create_table "flights", force: :cascade do |t|
     t.string "user"
@@ -18,6 +18,12 @@ ActiveRecord::Schema.define(version: 2019_03_15_225347) do
     t.datetime "start"
     t.datetime "finish"
     t.string "legs"
+    t.integer "plane_id"
+    t.index ["plane_id"], name: "index_flights_on_plane_id"
+  end
+
+  create_table "planes", force: :cascade do |t|
+    t.string "name"
   end
 
 end
