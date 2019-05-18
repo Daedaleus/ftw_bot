@@ -1,5 +1,5 @@
 class Helper
-  require 'tablegen'
+  require 'text-table'
 
   def self.today_as_string
     today = DateTime.now
@@ -31,33 +31,23 @@ class Helper
   def self.legs_stats(args)
     range = 500
     range = args.first.to_i unless args.first.nil?
-    table = TableGen.new
-    table.width = 23
-    table.column 0 do |col|
-      col.stretch = true
-    end
-    table.header 'LEGS', 'Count'
-    table.separator
+    table = Text::Table.new
+    table.head =  ['LEGS', 'Count']
     Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }[0..10].each do |array|
-      table.row array[0], array[1]
+      table.rows << array
     end
-    table
+    "```\n#{table.to_s}\n```"
   end
 
   def self.plane_stats(args)
     range = 500
     range = args.first.to_i unless args.first.nil?
-    table = TableGen.new
-    table.width = 16
-    table.column 0 do |col|
-      col.stretch = true
-    end
-    table.header 'Plane', 'Count'
-    table.separator
+    table = Text::Table.new
+    table.head =  ['Plane', 'Count']
     Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
-      table.row array[0], array[1]
+      table.rows << array
     end
-    table
+    "```\n#{table.to_s}\n```"
   end
 
   def self.get_plane_id(name)
