@@ -119,7 +119,7 @@ class Helper
   def self.show_plan
     $logger.info "Showing plan"
     result = ''
-    flights = Flight.where('finish > ?', DateTime.now + (2.0/24)).order(finish: :asc)
+    flights = Flight.where('finish > ?', DateTime.now).order(finish: :asc) 
     if flights.count > 0
       flights.each do |flight|
         result += StringBuilder.show_plan(flight.user,
