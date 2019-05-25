@@ -28,15 +28,26 @@ class Helper
     result
   end
 
+  def self.pilot_stats(args)
+    range = 500
+    range = args.first.to_i unless args.first.nil?
+    table = Text::Table.new
+    table.head = ['Pilot', 'Count']
+    Flight.where('start > ?', Date.today - range.month).group(:user).count.sort { |a,b| b[1] <=> a[1] }.each do |array|
+      table.rows << array
+    end
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
+  end
+
   def self.legs_stats(args)
     range = 500
     range = args.first.to_i unless args.first.nil?
     table = Text::Table.new
     table.head =  ['LEGS', 'Count']
-    Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }[0..10].each do |array|
+    Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }.each do |array|
       table.rows << array
     end
-    "```\n#{table.to_s}\n```"
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
   end
 
   def self.plane_stats(args)
@@ -47,7 +58,7 @@ class Helper
     Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
       table.rows << array
     end
-    "```\n#{table.to_s}\n```"
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
   end
 
   def self.get_plane_id(name)

@@ -95,4 +95,8 @@ bot.command :legs_stats do |event, *args|
   Helper.legs_stats(args)
 end
 
+bot.command :pilot_stats do |event, *args|
+  Helper.pilot_stats(args)
+end
+
 bot.run
