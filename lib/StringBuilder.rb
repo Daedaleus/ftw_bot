@@ -28,6 +28,18 @@ class StringBuilder
     !plan
     This shows the actual flight plan for all pilots
 
+    !plane_stats months
+    This shows the statistic of used planes
+    Example !plane_stats 1
+
+    !legs_stats months
+    This shows the statistic of flown legs
+    Example !legs_stats 1
+
+    !pilot_stats months
+    This shows the statistic of the pilots
+    Example !pilot_stats 1
+
     !hello
     Say hello to me :-)
     (To check if I am not sleeping)

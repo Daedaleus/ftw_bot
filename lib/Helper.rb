@@ -7,7 +7,7 @@ class Helper
   end
 
   def self.get_token(path)
-      raise FileNotFoundException unless File.exists? path
+    raise FileNotFoundException unless File.exists? path
     File.open(path, &:readline).strip
   end
 
@@ -29,6 +29,7 @@ class Helper
   end
 
   def self.pilot_stats(args)
+    $logger.info "Showing pilot stats"
     range = 500
     range = args.first.to_i unless args.first.nil?
     table = Text::Table.new
@@ -36,10 +37,11 @@ class Helper
     Flight.where('start > ?', Date.today - range.month).group(:user).count.sort { |a,b| b[1] <=> a[1] }.each do |array|
       table.rows << array
     end
-    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s.truncate(1900)}\n```"
   end
 
   def self.legs_stats(args)
+    $logger.info "Showing legs stats"
     range = 500
     range = args.first.to_i unless args.first.nil?
     table = Text::Table.new
@@ -47,10 +49,11 @@ class Helper
     Flight.where('start > ?', Date.today - range.month).group(:legs).count.sort { |a,b| b[1] <=> a[1] }.each do |array|
       table.rows << array
     end
-    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s.truncate(1900)}\n```"
   end
 
   def self.plane_stats(args)
+    $logger.info "Showing plane stats"
     range = 500
     range = args.first.to_i unless args.first.nil?
     table = Text::Table.new
@@ -58,7 +61,7 @@ class Helper
     Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
       table.rows << array
     end
-    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s}\n```"
+    "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s.truncate(1900)}\n```"
   end
 
   def self.get_plane_id(name)
