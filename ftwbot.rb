@@ -1,18 +1,23 @@
-require 'sqlite3'
+DIR = File.expand_path(File.dirname(__FILE__))
+Dir.chdir(DIR)
 require 'active_record'
+require 'sqlite3'
 require 'discordrb'
 require 'date'
 require 'log4r'
 require 'require_all'
 
-require_all './lib'
-require_all './models'
+
+require_all 'own_lib'
+require_all 'models'
 
 Log4r::Logger.root.level = Log4r::DEBUG
 $logger = Log4r::Logger.new('discord_bot')
 Log4r::StderrOutputter.new 'console'
 $logger.add('console')
-
+file = Log4r::FileOutputter.new( 'discord_bot', filename:'prod.log' )
+file.formatter = Log4r::PatternFormatter.new(pattern: "%l %d %m")
+$logger.add file 
 $logger.info 'Starting the bot'
 $logger.info 'Initialized logging'
 
@@ -27,7 +32,7 @@ Time.zone = 'Berlin'
 
 $logger.info 'Initialized models'
 
-TOKEN_FILE = './token.txt'.freeze
+TOKEN_FILE = 'token.txt'.freeze
 token = Helper.get_token(TOKEN_FILE)
 
 $logger.info 'Loaded token'

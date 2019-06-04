@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'activerecord'
 gem 'discordrb'
+gem 'daemons'
 gem 'standalone_migrations'
 gem 'sqlite3', '~> 1.3.13'
 gem 'yard'
