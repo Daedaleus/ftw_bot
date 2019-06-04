@@ -57,9 +57,10 @@ class Helper
     range = 500
     range = args.first.to_i unless args.first.nil?
     table = Text::Table.new
-    table.head =  ['Plane', 'Count']
+    table.head =  ['Plane', 'Count', 'Last flight']
     Plane.joins(:flights).where('flights.start > ?', Date.today - range.months).group(:name).count.sort{|a,b| b[1]<=>a[1]}.each do |array|
-      table.rows << array
+      last_flight = Plane.find_by_name(array.first).flights.order(:finish).last.finish.to_date
+      table.rows << (array.push last_flight)
     end
     "```\nFlights since #{Date.today - range.month}\n\n#{table.to_s.truncate(1900)}\n```"
   end
@@ -74,7 +75,7 @@ class Helper
       Plane.find_or_create_by(name: 'B757').id
     when 'Citation2'
       Plane.find_or_create_by(name: 'Citation2').id
-    when 'B738', 'B378', '737', 'b737', 'B737'
+    when 'B738', 'B378', '737', 'b737', 'B737', 'b738'
       Plane.find_or_create_by(name: 'B738').id
     when 'E195', 'L195', 'L.195', 'L-E195', 'EMB195', 'L.E195'
       Plane.find_or_create_by(name: 'E195').id
@@ -88,10 +89,8 @@ class Helper
       Plane.find_or_create_by(name: 'DC3').id
     when 'TMB', 'TMB850'
       Plane.find_or_create_by(name: 'TMB850').id
-    when 'MD82', 'MD-82'
+    when 'MD82', 'MD-82', 'md82', 'MD80', 'md80', 'md-80'
       Plane.find_or_create_by(name: 'MD82').id
-    when 'MD80'
-      Plane.find_or_create_by(name: 'MD80').id
     else
       Plane.find_or_create_by(name: name).id
     end
@@ -133,7 +132,7 @@ class Helper
   def self.show_plan
     $logger.info "Showing plan"
     result = ''
-    flights = Flight.where('finish > ?', DateTime.now).order(finish: :asc) 
+    flights = Flight.where('finish > ?', DateTime.now + 2.hours).order(finish: :asc) 
     if flights.count > 0
       flights.each do |flight|
         result += StringBuilder.show_plan(flight.user,
