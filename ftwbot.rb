@@ -104,4 +104,8 @@ bot.command :pilot_stats do |event, *args|
   Helper.pilot_stats(args)
 end
 
+bot.command :change do |event, *args|
+  Helper.change_flight(args)
+end
+
 bot.run

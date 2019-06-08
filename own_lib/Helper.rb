@@ -28,6 +28,12 @@ class Helper
     result
   end
 
+  def self.change_flight(args)
+    return "No!" unlass args[0] is_a? Integer
+    flight = Flight.find(args[0])
+
+  end
+
   def self.pilot_stats(args)
     $logger.info "Showing pilot stats"
     range = 500
