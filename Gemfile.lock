@@ -143,7 +143,7 @@ DEPENDENCIES
   minitest
   require_all
   rubocop
-  sqlite3 (~> 1.3.13)
+  sqlite3
   standalone_migrations
   text-table
   yard

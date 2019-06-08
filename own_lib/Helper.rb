@@ -29,7 +29,7 @@ class Helper
   end
 
   def self.change_flight(args)
-    return "No!" unlass args[0] is_a? Integer
+    return "No!" unless args[0].is_a? Integer
     flight = Flight.find(args[0])
 
   end
