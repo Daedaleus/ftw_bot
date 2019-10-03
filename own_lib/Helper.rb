@@ -7,7 +7,7 @@ class Helper
   end
 
   def self.get_token(path)
-    raise FileNotFoundException unless File.exists? path
+    raise StandardError unless File.exists? path
     File.open(path, &:readline).strip
   end
 
