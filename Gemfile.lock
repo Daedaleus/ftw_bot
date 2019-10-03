@@ -129,7 +129,7 @@ GEM
     websocket-client-simple (0.3.0)
       event_emitter
       websocket
-    yard (0.9.19)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
