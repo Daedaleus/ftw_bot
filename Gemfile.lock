@@ -63,9 +63,9 @@ GEM
     mini_portile2 (2.4.0)
     minitest (5.11.3)
     netrc (0.11.0)
-    nokogiri (1.10.3)
+    nokogiri (1.10.8)
       mini_portile2 (~> 2.4.0)
-    nokogiri (1.10.3-x64-mingw32)
+    nokogiri (1.10.8-x64-mingw32)
       mini_portile2 (~> 2.4.0)
     opus-ruby (1.0.1)
       ffi
