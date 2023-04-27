@@ -47,7 +47,7 @@ GEM
     parser (2.6.3.0)
       ast (~> 2.4.0)
     rainbow (3.0.0)
-    rake (12.3.2)
+    rake (13.0.1)
     rbnacl (3.4.0)
       ffi
     require_all (2.0.0)
