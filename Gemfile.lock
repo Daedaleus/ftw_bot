@@ -86,8 +86,7 @@ GEM
     websocket-client-simple (0.3.0)
       event_emitter
       websocket
-    yard (0.9.19)
-    zeitwerk (2.6.6)
+    yard (0.9.20)
 
 PLATFORMS
   ruby
